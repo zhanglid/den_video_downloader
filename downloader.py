@@ -1,28 +1,26 @@
 import urllib
-import urllib2
 import httplib
 import re
-#import requests
-
 
 
 host = "courses.uscden.net"
 login_url = r"/d2l/lp/auth/login/login.d2l"
 
 
+
 post_dict = {
     'd2l_referrer': "",
     'userName': "zhanglid@usc.edu",
-    'password': "xxxxx",
+    'password': raw_input('password:'),
     'loginPath': "/d2l/login"
 }
 
 post_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    #'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     #'Accept-Encoding': 'gzip, deflate, br',
     #'Accept-Language': 'zh-CN,zh;q=0.8',
-    'Cache-Control': 'max-age=0',
-    'Connection': 'keep-alive',
+    #'Cache-Control': 'max-age=0',
+    #'Connection': 'keep-alive',
     #'Content-Length': '89',
     'Content-Type': 'application/x-www-form-urlencoded',
     #'Host': 'courses.uscden.net',
@@ -41,30 +39,30 @@ conn.request("POST", login_url, post_data, post_headers)
 resp3 = conn.getresponse()
 resp3.read()
 
-print resp3.status
-print resp3.getheader("location")
+#print resp3.status
+#print resp3.getheader("location")
 location_id = resp3.getheader("location")[len('/d2l/home/'):]
 cookie = resp3.getheader("set-cookie")
 
-print location_id
+#print location_id
 
 xsrf_url = resp3.getheader("location")
-print xsrf_url
-print cookie
+#print xsrf_url
+#print cookie
 
 d2lSessionVal = re.compile(r'd2lSessionVal=[\d\w]+').search(cookie).group()
 d2lSecureSessionVal = re.compile(r'd2lSecureSessionVal=[\d\w]+').search(cookie).group()
-print d2lSessionVal
-print d2lSecureSessionVal
+#print d2lSessionVal
+#print d2lSecureSessionVal
 
 xsrf_headers = {
-    'Connection':   'keep-alive',
+    #'Connection':   'keep-alive',
     'Cookie': d2lSessionVal + '; ' + d2lSecureSessionVal,
-    'Host': 'courses.uscden.net',
-    'Upgrade-Insecure-Requests': '1',
-    'Cache-Control': 'max-age=0',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    #'Host': 'courses.uscden.net',
+    #'Upgrade-Insecure-Requests': '1',
+    #'Cache-Control': 'max-age=0',
+    #'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+    #'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     #'Accept-Encoding': 'gzip, deflate, sdch, br',
     #'Accept-Language': 'zh-CN,zh;q=0.8'
 }
@@ -76,7 +74,7 @@ xsrf_data = resp_xsrf.read()
 begin_index = re.compile(r"d2l_referrer").search(xsrf_data).end()
 
 xsrf = xsrf_data[begin_index+5:begin_index+37]
-print xsrf
+#print xsrf
 
 
 course_info_url = "/d2l/le/manageCourses/widget/myCourses/"+location_id+"/ContentPartial?defaultLeftRightPixelLength=10&defaultTopBottomPixelLength=7"
@@ -96,7 +94,7 @@ course_info_post_headers = {
     'Cookie': d2lSessionVal + '; ' + d2lSecureSessionVal
     #'Cookie': "d2lSessionVal=BJC063UxcznhT9DghgM0chWNO; d2lSecureSessionVal=O8WeusW47G7lhtvEERnSeVZ7f"
 }
-print course_info_post_headers
+#print course_info_post_headers
 course_info_post_dict = {
     'widgetId': '2',
     '_d2l_prc$headingLevel':    '3',
@@ -114,8 +112,8 @@ conn.request("POST", course_info_url, course_info_post_data, course_info_post_he
 
 resp4 = conn.getresponse()
 
-print resp4.status
-print resp4.getheaders()
+#print resp4.status
+#print resp4.getheaders()
 course_data = resp4.read()
 
 
@@ -132,3 +130,4 @@ def find_term_list(course_data):
     return term_list
 
 print find_term_list(course_data)
+print course_data
